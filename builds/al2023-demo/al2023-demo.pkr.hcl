@@ -2,8 +2,24 @@ packer {
   required_plugins {
     amazon = {
       source  = "github.com/hashicorp/amazon"
-      version = "~> 1.2.8"
+      version = "~> 1.3"
     }
+  }
+}
+
+# TOP LEVEL - not inside build block
+hcp_packer_registry {
+  bucket_name = var.hcp_bucket_name
+  description = "AL2023 demo image for AAP+TFE demo"
+
+  bucket_labels = {
+    "os"          = "amazon-linux-2023"
+    "environment" = "dev"
+    "demo"        = "aap-tfe-demo"
+  }
+
+  build_labels = {
+    "build-time" = "{{timestamp}}"
   }
 }
 
@@ -30,23 +46,6 @@ source "amazon-ebs" "al2023_demo" {
     BuildDate     = "{{timestamp}}"
     ManagedBy     = "packer"
     AnsibleManaged = "true"
-  }
-
-  # HCP Packer metadata
-  hcp_packer_registry {
-    bucket_name = var.hcp_bucket_name
-    description = "AL2023 demo image for AAP+Packer+TFE demo"
-
-    bucket_labels = {
-      "os"          = "amazon-linux-2023"
-      "environment" = "dev"
-      "demo"        = "aap-tfe-demo"
-    }
-
-    build_labels = {
-      "build-time"   = "{{timestamp}}"
-      "base-ami"     = data.amazon-ami.hc-al2023-base.id
-    }
   }
 }
 

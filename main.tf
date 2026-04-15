@@ -3,20 +3,18 @@ resource "null_resource" "packer_build" {
     git_commit = var.git_commit_sha
   }
 
-  provisioner "local-exec" {
+    provisioner "local-exec" {
     command = <<-EOT
         set -e
 
+        # Download and install Packer binary directly
         PACKER_VERSION="1.15.1"
         wget -q -O /tmp/packer.zip "https://releases.hashicorp.com/packer/$${PACKER_VERSION}/packer_$${PACKER_VERSION}_linux_amd64.zip"
         unzip -o /tmp/packer.zip -d /tmp/
         chmod +x /tmp/packer
+        export PATH="/tmp:$PATH"
 
-        # Force clean plugin directory to avoid cached old versions
-        rm -rf /home/tfc-agent/.tfc-agent/component/terraform/runs/*/. config/packer/plugins/github.com/hashicorp/amazon 2>/dev/null || true
-        export PACKER_PLUGIN_PATH="/tmp/packer-plugins"
-        mkdir -p /tmp/packer-plugins
-
+        # Run Packer build
         cd ${path.module}
         /tmp/packer init builds/al2023-demo/
         /tmp/packer build \

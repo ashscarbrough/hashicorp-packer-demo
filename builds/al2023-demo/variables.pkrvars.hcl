@@ -1,0 +1,5 @@
+aws_region       = "us-east-1"
+instance_type    = "t3.micro"
+ec2_instance_ami_name = "hc-base-al2023-x86_64"
+hcp_bucket_name  = "packer-demo-al2023"
+hcp_channel_name = "dev"

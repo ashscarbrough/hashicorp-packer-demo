@@ -40,6 +40,7 @@ source "amazon-ebs" "al2023_demo" {
     bucket_labels = {
       "os"          = "amazon-linux-2023"
       "environment" = "dev"
+      "demo"        = "aap-tfe-demo"
     }
 
     build_labels = {

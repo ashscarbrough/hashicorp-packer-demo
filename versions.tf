@@ -9,9 +9,9 @@ terraform {
   }
 
   cloud {
-    organization = "your-org-name"
+    organization = "hashicorp-wwtfo-demo-platform-prod"
     workspaces {
-      name = "hcp-packer-build"
+      name = "hashicorp-packer-demo"
     }
   }
 }

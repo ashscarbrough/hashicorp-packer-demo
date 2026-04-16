@@ -1,6 +1,8 @@
 resource "null_resource" "packer_build" {
   triggers = {
-    git_commit = var.git_commit_sha
+    git_commit    = var.git_commit_sha
+    template_hash = filemd5("${path.module}/builds/al2023-demo/al2023-demo.pkr.hcl")
+    vars_hash     = filemd5("${path.module}/builds/al2023-demo/variables.pkrvars.hcl")
   }
 
     provisioner "local-exec" {

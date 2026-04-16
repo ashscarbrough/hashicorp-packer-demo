@@ -7,7 +7,6 @@ packer {
   }
 }
 
-# TOP LEVEL - not inside build block
 hcp_packer_registry {
   bucket_name = var.hcp_bucket_name
   description = "AL2023 demo image for AAP+TFE demo"
@@ -41,6 +40,15 @@ source "amazon-ebs" "al2023_demo" {
   ami_name        = "demo-al2023-{{timestamp}}"
   ami_description = "Demo AL2023 - HashiCorp compliant image built by Packer"
 
+  # Tags on the temporary instance used for building the image
+  run_tags = {
+    Name        = "packer-temporary-image-build-al2023"
+    Purpose     = "packer-build-temporary"
+    ManagedBy   = "packer"
+    AutoDelete  = "true"
+  }
+
+  # Tags to apply to the resulting AMI and any associated resources (like snapshots)
   tags = {
     Name          = "demo-al2023"
     BuildDate     = "{{timestamp}}"
@@ -58,11 +66,11 @@ build {
     inline = [
       "sudo dnf update -y",
       "sudo dnf install -y python3 cloud-init",
-        "sudo dnf install -y nginx",
-        "sudo systemctl enable nginx",
-        "sudo systemctl start nginx",
-        "echo '<html><body><h1>Base image: ${data.amazon-ami.hc-al2023-base.id} | Version: 0.1</h1></body></html>' | sudo tee /usr/share/nginx/html/index.html",
-        "sudo systemctl enable cloud-init"
+      "sudo dnf install -y nginx",
+      "sudo systemctl enable nginx",
+      "sudo systemctl start nginx",
+      "echo '<html><body><h1>Base image: ${data.amazon-ami.hc-al2023-base.id} | Version: ${var.app_version}</h1></body></html>' | sudo tee /usr/share/nginx/html/index.html",
+      "sudo systemctl enable cloud-init"
     ]
   }
 }

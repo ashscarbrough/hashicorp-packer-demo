@@ -22,3 +22,8 @@ variable "hcp_channel_name" {
   type    = string
   default = "dev"
 }
+
+variable "app_version" {
+  type    = string
+  default = "0.1"
+}

@@ -7,6 +7,13 @@ packer {
   }
 }
 
+locals {
+  app_version = try(
+    data.hcp_packer_artifact.al2023_demo.labels["app-version"],
+    var.app_version
+  )
+}
+
 hcp_packer_registry {
   bucket_name = var.hcp_bucket_name
   description = "AL2023 demo image for AAP+TFE demo"
@@ -61,15 +68,53 @@ build {
   name    = "al2023-demo"
   sources = ["source.amazon-ebs.al2023_demo"]
 
-  # Install base packages needed for Ansible to connect
   provisioner "shell" {
     inline = [
+      # Base packages
       "sudo dnf update -y",
-      "sudo dnf install -y python3 cloud-init",
-      "sudo dnf install -y nginx",
+      "sudo dnf install -y python3 cloud-init nginx",
+
+      # Create nginx config with two locations:
+      # / → version page (baked at build time)
+      # /status → runtime status page (written by Ansible post-deploy)
+      "sudo tee /etc/nginx/conf.d/demo.conf > /dev/null <<'NGINXCONF'",
+      "server {",
+      "    listen 80;",
+      "    root /usr/share/nginx/html;",
+      "    location / { try_files $uri $uri/ =404; }",
+      "    location /status { alias /var/www/status/; try_files $uri $uri/ =404; }",
+      "}",
+      "NGINXCONF",
+
+      # Bake the version page at image build time
+      "sudo mkdir -p /usr/share/nginx/html",
+      "sudo tee /usr/share/nginx/html/index.html > /dev/null <<HTMLEOF",
+      "<!DOCTYPE html>",
+      "<html>",
+      "<head><title>AAP + TFE Demo</title>",
+      "<style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:0 20px;}",
+      ".badge{display:inline-block;padding:4px 12px;border-radius:4px;font-size:14px;}",
+      ".packer{background:#5C4EE5;color:white;}",
+      ".pending{background:#f0ad4e;color:white;}",
+      "h1{color:#5C4EE5;}</style></head>",
+      "<body>",
+      "<h1>HashiCorp + Red Hat Better Together</h1>",
+      "<h2>Image Details</h2>",
+      "<p><strong>App version:</strong> ${var.app_version}</p>",
+      "<p><strong>Base AMI:</strong> ${data.amazon-ami.hc-al2023-base.id}</p>",
+      "<p><strong>Built by:</strong> <span class='badge packer'>HCP Packer</span></p>",
+      "<h2>Runtime Configuration</h2>",
+      "<p><span class='badge pending'>Pending AAP configuration...</span></p>",
+      "<p>Visit <a href='/status'>/status</a> for live runtime details after Ansible configures this instance.</p>",
+      "</body></html>",
+      "HTMLEOF",
+
+      # Create status directory for Ansible to write into
+      "sudo mkdir -p /var/www/status",
+      "sudo chmod 755 /var/www/status",
+
+      # Enable services
       "sudo systemctl enable nginx",
-      "sudo systemctl start nginx",
-      "echo '<html><body><h1>Base image: ${data.amazon-ami.hc-al2023-base.id} | Version: ${var.app_version}</h1></body></html>' | sudo tee /usr/share/nginx/html/index.html",
       "sudo systemctl enable cloud-init"
     ]
   }

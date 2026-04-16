@@ -24,6 +24,7 @@ variable "hcp_channel_name" {
 }
 
 variable "app_version" {
+  description = "Application version — read from HCP Packer artifact labels"
   type    = string
-  default = "0.1"
+  default = "1.0.0"
 }

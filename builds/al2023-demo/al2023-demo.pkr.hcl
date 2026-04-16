@@ -7,13 +7,6 @@ packer {
   }
 }
 
-locals {
-  app_version = try(
-    data.hcp_packer_artifact.al2023_demo.labels["app-version"],
-    var.app_version
-  )
-}
-
 hcp_packer_registry {
   bucket_name = var.hcp_bucket_name
   description = "AL2023 demo image for AAP+TFE demo"

@@ -84,7 +84,7 @@ build {
       "sudo tee /usr/share/nginx/html/index.html > /dev/null <<HTMLEOF",
       "<!DOCTYPE html>",
       "<html>",
-      "<head><title>AAP + TFE Demo</title>",
+      "<head><title>AAP + Terraform + Packer Demo</title>",
       "<style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:0 20px;}",
       ".badge{display:inline-block;padding:4px 12px;border-radius:4px;font-size:14px;}",
       ".packer{background:#5C4EE5;color:white;}",

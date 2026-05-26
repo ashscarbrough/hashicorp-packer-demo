@@ -96,7 +96,7 @@ build {
       "<h1>HashiCorp + Red Hat Better Together</h1>",
       "<h2><span class='badge packer'>HCP Packer</span> Image Details</h2>",
       "<table>",
-      "  <tr><th>Image version</th><td>${var.app_version}</td></tr>",
+      "  <tr><th>Image version</th><td>${var.image_version}</td></tr>",
       "  <tr><th>Base AMI</th><td>${data.amazon-ami.hc-al2023-base.id}</td></tr>",
       "</table>",
       "<h2>Runtime Configuration</h2>",

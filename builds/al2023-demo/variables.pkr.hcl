@@ -23,8 +23,8 @@ variable "hcp_channel_name" {
   default = "dev"
 }
 
-variable "app_version" {
-  description = "Application version — read from HCP Packer artifact labels"
+variable "image_version" {
+  description = "Image version — read from HCP Packer artifact labels"
   type    = string
   default = "1.0.0"
 }

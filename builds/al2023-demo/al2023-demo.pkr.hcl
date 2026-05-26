@@ -75,7 +75,7 @@ build {
       "    listen 80;",
       "    root /usr/share/nginx/html;",
       "    location / { try_files $uri $uri/ =404; }",
-      "    location /status { alias /var/www/status/; try_files $uri $uri/ =404; }",
+      "    location /status { root /var/www; try_files /status/index.html =404; }",
       "}",
       "NGINXCONF",
 

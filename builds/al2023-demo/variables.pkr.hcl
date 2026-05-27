@@ -26,5 +26,5 @@ variable "hcp_channel_name" {
 variable "image_version" {
   description = "Image version — read from HCP Packer artifact labels"
   type    = string
-  default = "1.0.0"
+  default = "v1"
 }
